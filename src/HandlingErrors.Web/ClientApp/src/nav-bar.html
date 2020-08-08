@@ -1,0 +1,19 @@
+<template bindable="router">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
+        <a class="navbar-brand" href="#">
+            <i class="fa fa-home"></i>
+            <span>${router.title}</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li repeat.for="row of router.navigation" class="nav-item ${row.isActive ? 'active' : ''}">
+                    <a class="nav-link" href.bind="row.href">${row.title} <span class="sr-only">(current)</span></a>
+                </li>
+             
+            </ul>
+        </div>
+    </nav>
+</template>

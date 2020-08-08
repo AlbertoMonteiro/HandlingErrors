@@ -1,0 +1,33 @@
+<template>
+    <section class="au-animate">
+        <h2>${heading}</h2>
+        <form role="form" submit.delegate="enviarRecado()">
+            <div class="form-group row">
+                <label for="inputDe" class="col-sm-1 col-form-label">De</label>
+                <div class="col-sm-11">
+                    <input value.bind="recado.remetente & validate" class="form-control" id="inputDe">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="inputPara" class="col-sm-1 col-form-label">Para</label>
+                <div class="col-sm-11">
+                    <input type="text" value.bind="recado.destinatario & validate" class="form-control" id="inputPara">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="inputAssunto" class="col-sm-1 col-form-label">Assunto</label>
+                <div class="col-sm-11">
+                    <input type="text" value.bind="recado.assunto & validate" class="form-control" id="inputAssunto">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="inputMensagem" class="col-sm-1 col-form-label">Mensagem</label>
+                <div class="col-sm-11">
+                    <textarea value.bind="recado.mensagem & validate" class="form-control" cols="5" rows="5" id="inputMensagem">
+                </textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+    </section>
+</template>

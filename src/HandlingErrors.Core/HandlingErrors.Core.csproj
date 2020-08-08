@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Divino.OperationResult" Version="1.0.2" />
+    <PackageReference Include="FluentValidation" Version="9.1.1" />
+    <PackageReference Include="Mediatr" Version="8.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HandlingErrors.Shared\HandlingErrors.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

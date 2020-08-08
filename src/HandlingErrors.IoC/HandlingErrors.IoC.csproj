@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="10.0.0" />
+		<PackageReference Include="FluentValidation" Version="9.1.1" />
+		<PackageReference Include="Mediatr" Version="8.1.0" />
+		<PackageReference Include="SimpleInjector" Version="5.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\HandlingErrors.Core\HandlingErrors.Core.csproj" />
+		<ProjectReference Include="..\HandlingErrors.Data\HandlingErrors.Data.csproj" />
+	</ItemGroup>
+
+</Project>

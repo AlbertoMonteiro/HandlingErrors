@@ -1,0 +1,26 @@
+<template>
+    <require from="bootstrap/dist/css/bootstrap.min.css"></require>
+    <require from="font-awesome/css/font-awesome.min.css"></require>
+    <require from="./styles.styl"></require>
+
+    <require from="./nav-bar.html"></require>
+
+    <nav-bar router.bind="router"></nav-bar>
+
+    <div class="page-host">
+        <router-view></router-view>
+    </div>
+    <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="mr-auto">Recado criado</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                ${toastMessage}
+            </div>
+        </div>
+    </div>
+</template>
