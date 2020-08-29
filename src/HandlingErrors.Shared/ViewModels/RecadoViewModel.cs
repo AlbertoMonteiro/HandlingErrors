@@ -9,8 +9,8 @@ namespace HandlingErrors.Shared.ViewModels
         public string Destinatario { get; set; }
         public string Assunto { get; set; }
         public string Mensagem { get; set; }
-        public DateTimeOffset DataCriacao { get; set; } 
+        public DateTimeOffset DataCriacao { get; set; }
         public long? AgrupadoComId { get; set; }
-        public int TotalFilhos{ get; set; }
+        public int TotalFilhos { get; set; }
     }
 }

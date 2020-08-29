@@ -10,7 +10,7 @@ namespace HandlingErrors.Data
         {
             builder.ToTable("Recados");
             builder.HasKey(r => r.Id);
-         
+
             builder.Property(r => r.Remetente).HasMaxLength(50);
             builder.Property(r => r.Destinatario).HasMaxLength(50);
             builder.Property(r => r.Assunto).HasMaxLength(100);

@@ -29,6 +29,16 @@ namespace HandlingErrors.Web.Controllers
                 (_, _, var erro) => TratarErro(erro)
             };
 
+        [HttpGet("nhibernate")]
+        [EnableQueryCustom]
+        [ProducesResponseType(200, Type = typeof(RecadoViewModel[]))]
+        public async Task<IActionResult> GetWithNHibernate()
+            => await _mediator.Send(new ObterRecadosComNHibernateRequest()) switch
+            {
+                (true, var resultado, _) => Ok(resultado),
+                (_, _, var erro) => TratarErro(erro)
+            };
+
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]

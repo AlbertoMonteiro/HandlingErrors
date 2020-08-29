@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNet.OData.Query;
@@ -34,17 +33,5 @@ namespace HandlingErrors.Web.Infra
             if (oDataFeature.TotalCount.HasValue && context.Result is ObjectResult obj && obj.Value is IQueryable queryable)
                 context.Result = new ObjectResult(new PaginatedResult(oDataFeature.TotalCount, queryable)) { StatusCode = 200 };
         }
-    }
-
-    public class PaginatedResult
-    {
-        public PaginatedResult(long? count, IEnumerable allItems)
-        {
-            Count = count;
-            Items = allItems;
-        }
-
-        public long? Count { get; set; }
-        public IEnumerable Items { get; set; }
     }
 }

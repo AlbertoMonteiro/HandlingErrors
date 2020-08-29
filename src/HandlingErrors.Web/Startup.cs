@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Text.Json.Serialization;
 using Aurelia.DotNet;
 using HandlingErrors.Data;
 using HandlingErrors.IoC;
@@ -10,12 +12,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
-using System.Linq;
-using System.Text.Json.Serialization;
 
 namespace HandlingErrors.Web
 {
@@ -24,7 +25,8 @@ namespace HandlingErrors.Web
         private const string APP_NAME = "HandlingErrors Recados App";
         private readonly Container _container = new Container();
 
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        public Startup(IConfiguration configuration)
+            => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 
@@ -54,7 +56,11 @@ namespace HandlingErrors.Web
             if (Configuration.GetValue<bool>("useInMemory"))
                 services.AddDbContext<HandlingErrorsContext>(options => options.UseInMemoryDatabase("HandlingErrors"), ServiceLifetime.Scoped);
             else
-                services.AddDbContext<HandlingErrorsContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
+            {
+                var logger = LoggerFactory.Create(builder => { builder.AddConsole(); });
+                services.AddDbContext<HandlingErrorsContext>(options => options.UseSqlServer(connectionString).UseLoggerFactory(logger), ServiceLifetime.Scoped);
+                services.AddNHibernate(connectionString);
+            }
 
             services.AddSimpleInjector(_container, c => c.AddAspNetCore().AddControllerActivation());
 

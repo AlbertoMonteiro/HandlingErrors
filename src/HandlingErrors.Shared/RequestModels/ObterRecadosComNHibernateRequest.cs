@@ -5,7 +5,7 @@ using OperationResult;
 
 namespace HandlingErrors.Shared.RequestModels
 {
-    public class ObterRecadosRequest : IRequest<Result<IQueryable<RecadoViewModel>>>
+    public class ObterRecadosComNHibernateRequest : IRequest<Result<IQueryable<RecadoViewModel>>>
     {
 
     }

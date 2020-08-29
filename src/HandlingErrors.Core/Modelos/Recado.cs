@@ -4,6 +4,8 @@ namespace HandlingErrors.Core.Modelos
 {
     public class Recado : Entidade
     {
+        protected Recado() { } //nhibernate needs
+
         public Recado(long id, string remetente, string destinatario, string assunto, string mensagem, long? agrupadoComId = null)
             : this(remetente, destinatario, assunto, mensagem, agrupadoComId)
             => Id = id;
@@ -17,12 +19,12 @@ namespace HandlingErrors.Core.Modelos
             AgrupadoComId = agrupadoComId;
         }
 
-        public string Remetente { get; private set; }
-        public string Destinatario { get; private set; }
-        public string Assunto { get; private set; }
-        public string Mensagem { get; private set; }
-        public List<Recado> RecadosFilhos { get; set; }
-        public long? AgrupadoComId { get; private set; }
-        public Recado AgrupadoCom { get; private set; }
+        public virtual string Remetente { get; protected internal set; }
+        public virtual string Destinatario { get; protected internal set; }
+        public virtual string Assunto { get; protected internal set; }
+        public virtual string Mensagem { get; protected internal set; }
+        public virtual List<Recado> RecadosFilhos { get; set; }
+        public virtual long? AgrupadoComId { get; protected internal set; }
+        public virtual Recado AgrupadoCom { get; protected internal set; }
     }
 }

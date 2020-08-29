@@ -4,7 +4,7 @@ namespace HandlingErrors.Core.Modelos
 {
     public abstract class Entidade
     {
-        public long Id { get; protected set; }
-        public DateTimeOffset DataCriacao { get; private set; } = DateTimeOffset.UtcNow;
+        public virtual long Id { get; protected internal set; }
+        public virtual DateTimeOffset DataCriacao { get; protected internal set; } = DateTimeOffset.UtcNow;
     }
 }
