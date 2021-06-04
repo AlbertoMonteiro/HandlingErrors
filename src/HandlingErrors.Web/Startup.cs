@@ -82,10 +82,7 @@ namespace HandlingErrors.Web
             app.UseRouting();
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", APP_NAME);
-            });
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", APP_NAME));
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();

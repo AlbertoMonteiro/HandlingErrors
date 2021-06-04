@@ -15,11 +15,11 @@ namespace HandlingErrors.Web.Infra
 <a target='_blank' href='http://docs.oasis-open.org/odata/odata/v4.01/cs01/part1-protocol/odata-v4.01-cs01-part1-protocol.html#sec_SystemQueryOptionfilter'>Filter</a> |
 <a target='_blank' href='http://docs.oasis-open.org/odata/odata/v4.01/cs01/part1-protocol/odata-v4.01-cs01-part1-protocol.html#sec_SystemQueryOptioncount'>Count</a>";
 
-        private static readonly OpenApiParameter TopParameter = CreateODataParameter("number", "$top", "OData: Field that allow you to set how many registers will be returned(max 30)", "10");
-        private static readonly OpenApiParameter SkipParameter = CreateODataParameter("number", "$skip", "OData: Field that allow to skip registers", "5");
-        private static readonly OpenApiParameter OrderByParameter = CreateODataParameter("string", "$orderBy", "OData: Field that allow to order data", "fieldName desc, fieldName2 asc");
-        private static readonly OpenApiParameter FilterParameter = CreateODataParameter("string", "$filter", "OData: Field that allow to filter data", "fieldName eq 'Some string' and intField eq 2");
-        private static readonly OpenApiParameter CountParameter = CreateODataParameter("boolean", "$count", "OData: Field that allow to set if you want the total count", "true");
+        private static readonly OpenApiParameter TopParameter = CreateODataParameter("number", "$top", "OData: Field that allow you to set how many registers will be returned(max 30)");
+        private static readonly OpenApiParameter SkipParameter = CreateODataParameter("number", "$skip", "OData: Field that allow to skip registers");
+        private static readonly OpenApiParameter OrderByParameter = CreateODataParameter("string", "$orderBy", "OData: Field that allow to order data");
+        private static readonly OpenApiParameter FilterParameter = CreateODataParameter("string", "$filter", "OData: Field that allow to filter data");
+        private static readonly OpenApiParameter CountParameter = CreateODataParameter("boolean", "$count", "OData: Field that allow to set if you want the total count");
         private static readonly OpenApiParameter[] ODataParameters = { FilterParameter, OrderByParameter, SkipParameter, TopParameter, CountParameter };
 
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
@@ -36,7 +36,7 @@ namespace HandlingErrors.Web.Infra
                     operation.Parameters.Add(p);
         }
 
-        private static OpenApiParameter CreateODataParameter(string type, string name, string description, string example)
+        private static OpenApiParameter CreateODataParameter(string type, string name, string description)
             => new OpenApiParameter
             {
                 Schema = new OpenApiSchema() { Type = type },

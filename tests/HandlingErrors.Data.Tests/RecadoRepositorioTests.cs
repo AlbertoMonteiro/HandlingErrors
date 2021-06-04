@@ -87,7 +87,7 @@ namespace HandlingErrors.Data.Tests
         private static void AlterarPropriedadeComReflection<T, TValue>(T objeto, string propriedade, TValue valor)
         {
             var type = typeof(T);
-            var fieldName = $"<{nameof(Recado.DataCriacao)}>k__BackingField";
+            var fieldName = $"<{propriedade}>k__BackingField";
 
             var prop = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic) ??
                 type.BaseType.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
