@@ -23,7 +23,7 @@ namespace HandlingErrors.Data
             var hoje = DateTimeOffset.UtcNow.Date;
             var textoRemover = _textosParaIgnorar.FirstOrDefault(ignorar => assunto.IndexOf(ignorar) >= 0);
             if (textoRemover != null)
-                assunto = assunto.Substring(textoRemover.Length).Trim();
+                assunto = assunto[textoRemover.Length..].Trim();
 
             return _contexto.Recados
                 .OrderByDescending(r => r.DataCriacao)
