@@ -25,7 +25,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandlingErrors.Core.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandlingErrors.Data.Tests", "tests\HandlingErrors.Data.Tests\HandlingErrors.Data.Tests.csproj", "{0C8BFD61-1D1D-40CB-BD2A-F5CAFA81E3A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandlingErrors.Web.Tests", "tests\HandlingErrors.Web.Tests\HandlingErrors.Web.Tests.csproj", "{E4303611-5E07-478A-BD0D-4A651E6EC539}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandlingErrors.Web.Tests", "tests\HandlingErrors.Web.Tests\HandlingErrors.Web.Tests.csproj", "{E4303611-5E07-478A-BD0D-4A651E6EC539}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4DEC8703-088F-4579-B315-9108AD8E6DDA}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
