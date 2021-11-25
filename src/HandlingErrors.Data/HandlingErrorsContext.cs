@@ -5,6 +5,13 @@ using System.Linq;
 
 namespace HandlingErrors.Data
 {
+    /// <summary>
+    /// Contexto para acesso a base de dados
+    /// </summary>
+    /// <C4Technology>MS SQL Server</C4Technology>
+    /// <C4Tags>mssqlserver,database</C4Tags>
+    /// <C4RelationshipLabel>Uses</C4RelationshipLabel>
+    /// <C4RelationshipProtocol>Entity Framework Core</C4RelationshipProtocol>
     public class HandlingErrorsContext : DbContext
     {
         public HandlingErrorsContext(DbContextOptions<HandlingErrorsContext> options)
