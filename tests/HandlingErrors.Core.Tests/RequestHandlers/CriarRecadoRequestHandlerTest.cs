@@ -36,13 +36,7 @@ public class CriarRecadoRequestHandlerTest
         _repo.ObterRecadoParaAgrupamento(novoRecado.Remetente, novoRecado.Destinatario, novoRecado.Assunto)
             .Returns(deveAgrupar ? recadoExistente : default);
 
-        var request = new CriarRecadoRequest
-        {
-            Remetente = novoRecado.Remetente,
-            Destinatario = novoRecado.Destinatario,
-            Mensagem = novoRecado.Mensagem,
-            Assunto = novoRecado.Assunto
-        };
+        var request = new CriarRecadoRequest(novoRecado.Remetente, novoRecado.Destinatario, novoRecado.Assunto, novoRecado.Mensagem);
 
         //act
         var resultado = await _sut.Handle(request, CancellationToken.None);
@@ -64,13 +58,7 @@ public class CriarRecadoRequestHandlerTest
         _repo.ObterRecadoParaAgrupamento(novoRecado.Remetente, novoRecado.Destinatario, novoRecado.Assunto)
             .Returns(recadoExistente);
 
-        var request = new CriarRecadoRequest
-        {
-            Remetente = novoRecado.Remetente,
-            Destinatario = novoRecado.Destinatario,
-            Mensagem = novoRecado.Mensagem,
-            Assunto = novoRecado.Assunto
-        };
+        var request = new CriarRecadoRequest(novoRecado.Remetente, novoRecado.Destinatario, novoRecado.Assunto, novoRecado.Mensagem);
 
         //act
         var resultado = await _sut.Handle(request, CancellationToken.None);

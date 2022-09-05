@@ -1,12 +1,9 @@
 using HandlingErrors.Data;
 using HandlingErrors.IoC;
+using HandlingErrors.Web.Endpoints;
 using HandlingErrors.Web.Infra;
-using Microsoft.AspNetCore.OData;
-using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
-using System.Text.Json.Serialization;
 
 namespace HandlingErrors.Web;
 
@@ -20,20 +17,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddControllers(op =>
-            {
-                foreach (var formatter in op.OutputFormatters.OfType<ODataOutputFormatter>().Where(it => it.SupportedMediaTypes.Count == 0))
-                    formatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/odata"));
-
-                foreach (var formatter in op.InputFormatters.OfType<ODataInputFormatter>().Where(it => it.SupportedMediaTypes.Count == 0))
-                    formatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/odata"));
-            })
-            .AddJsonOptions(op =>
-            {
-                op.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                op.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            })
-            .AddOData(options => options.Select().Filter().OrderBy().SetMaxTop(30));
+        services.AddOData();
 
         var connectionString = Configuration["ConnectionStrings:DefaultConnection"];
         if (Configuration.GetValue<bool>("useInMemory"))
@@ -43,6 +27,7 @@ public class Startup
 
         services.AddServices();
 
+        services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = APP_NAME, Version = "v1" });
@@ -50,7 +35,8 @@ public class Startup
         });
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure<T>(T app, IWebHostEnvironment env)
+        where T : IApplicationBuilder, IEndpointRouteBuilder
     {
         using (var scope = app.ApplicationServices.CreateScope())
         {
@@ -65,6 +51,7 @@ public class Startup
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", APP_NAME));
 
-        app.UseEndpoints(endpoints => endpoints.MapControllers());
+        RecadosEndpoints.MapGet(app);
+        RecadosEndpoints.MapPost(app);
     }
 }
