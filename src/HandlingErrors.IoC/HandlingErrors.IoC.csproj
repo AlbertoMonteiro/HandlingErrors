@@ -1,19 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>true</ImplicitUsings>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="10.1.1" />
-		<PackageReference Include="FluentValidation" Version="10.2.3" />
-		<PackageReference Include="Mediatr" Version="9.0.0" />
-		<PackageReference Include="SimpleInjector" Version="5.3.0" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.2.1" />
+    <PackageReference Include="Mediatr" Version="10.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\HandlingErrors.Core\HandlingErrors.Core.csproj" />
-		<ProjectReference Include="..\HandlingErrors.Data\HandlingErrors.Data.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HandlingErrors.Core\HandlingErrors.Core.csproj" />
+    <ProjectReference Include="..\HandlingErrors.Data\HandlingErrors.Data.csproj" />
+  </ItemGroup>
 
 </Project>

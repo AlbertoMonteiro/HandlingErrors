@@ -1,42 +1,26 @@
-using Aurelia.DotNet;
 using HandlingErrors.Data;
 using HandlingErrors.IoC;
 using HandlingErrors.Web.Infra;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNet.OData.Formatter;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
-using SimpleInjector;
-using SimpleInjector.Lifestyles;
-using System.Linq;
 using System.Text.Json.Serialization;
 
-namespace HandlingErrors.Web
+namespace HandlingErrors.Web;
+
+public class Startup
 {
-    public class Startup
+    private const string APP_NAME = "HandlingErrors Recados App";
+
+    public Startup(IConfiguration configuration) => Configuration = configuration;
+
+    public IConfiguration Configuration { get; }
+
+    public void ConfigureServices(IServiceCollection services)
     {
-        private const string APP_NAME = "HandlingErrors Recados App";
-        private readonly Container _container = new Container();
-
-        public Startup(IConfiguration configuration) => Configuration = configuration;
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
-        {
-            InitializeContainer();
-            services.AddControllers();
-            services.AddOData();
-
-            services.AddMvcCore(op =>
+        services.AddControllers(op =>
             {
                 foreach (var formatter in op.OutputFormatters.OfType<ODataOutputFormatter>().Where(it => it.SupportedMediaTypes.Count == 0))
                     formatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/odata"));
@@ -46,67 +30,41 @@ namespace HandlingErrors.Web
             })
             .AddJsonOptions(op =>
             {
-                op.JsonSerializerOptions.IgnoreNullValues = true;
+                op.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 op.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            });
+            })
+            .AddOData(options => options.Select().Filter().OrderBy().SetMaxTop(30));
 
-            var connectionString = Configuration["ConnectionStrings:DefaultConnection"];
-            if (Configuration.GetValue<bool>("useInMemory"))
-                services.AddDbContext<HandlingErrorsContext>(options => options.UseInMemoryDatabase("HandlingErrors"), ServiceLifetime.Scoped);
-            else
-                services.AddDbContext<HandlingErrorsContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
+        var connectionString = Configuration["ConnectionStrings:DefaultConnection"];
+        if (Configuration.GetValue<bool>("useInMemory"))
+            services.AddDbContext<HandlingErrorsContext>(options => options.UseInMemoryDatabase("HandlingErrors"), ServiceLifetime.Scoped);
+        else
+            services.AddDbContext<HandlingErrorsContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Scoped);
 
-            services.AddSimpleInjector(_container, c => c.AddAspNetCore().AddControllerActivation());
+        services.AddServices();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = APP_NAME, Version = "v1" });
-                c.OperationFilter<SwaggerAddODataField>();
-            });
-
-            services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        services.AddSwaggerGen(c =>
         {
-            app.UseSimpleInjector(_container);
-            _container.Verify();
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = APP_NAME, Version = "v1" });
+            c.OperationFilter<SwaggerAddODataField>();
+        });
+    }
 
-            using var scope = AsyncScopedLifestyle.BeginScope(_container);
-            scope.GetService<HandlingErrorsContext>().Database.EnsureCreated();
-
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
-
-            app.UseRouting();
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", APP_NAME));
-
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.EnableDependencyInjection();
-                endpoints.Select().Filter().OrderBy().Count().MaxTop(30);
-            });
-
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                    spa.UseAureliaCliServer();
-            });
-        }
-
-        private void InitializeContainer()
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        using (var scope = app.ApplicationServices.CreateScope())
         {
-            _container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-            SimpleInjectorBootstrap.Initialize(_container);
+            scope.ServiceProvider.GetRequiredService<HandlingErrorsContext>().Database.EnsureCreated();
         }
+
+        if (env.IsDevelopment())
+            app.UseDeveloperExceptionPage();
+
+        app.UseRouting();
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", APP_NAME));
+
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
     }
 }

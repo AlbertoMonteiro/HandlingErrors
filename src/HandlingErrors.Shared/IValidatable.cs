@@ -1,6 +1,5 @@
-﻿namespace HandlingErrors.Shared
+﻿namespace HandlingErrors.Shared;
+
+public interface IValidatable
 {
-    public interface IValidatable
-    {
-    }
 }

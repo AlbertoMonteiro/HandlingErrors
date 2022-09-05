@@ -1,16 +1,15 @@
-﻿using HandlingErrors.Shared.RequestModels;
-using FluentValidation;
+﻿using FluentValidation;
+using HandlingErrors.Shared.RequestModels;
 
-namespace HandlingErrors.Core.Modelos.Validations
+namespace HandlingErrors.Core.Modelos.Validations;
+
+public sealed class ValidadorCriarRecadoRequest : AbstractValidator<CriarRecadoRequest>
 {
-    public sealed class ValidadorCriarRecadoRequest : AbstractValidator<CriarRecadoRequest>
+    public ValidadorCriarRecadoRequest()
     {
-        public ValidadorCriarRecadoRequest()
-        {
-            RuleFor(r => r.Remetente).NotEmpty().MaximumLength(50);
-            RuleFor(r => r.Destinatario).NotEmpty().MaximumLength(50);
-            RuleFor(r => r.Assunto).NotEmpty().MaximumLength(100);
-            RuleFor(r => r.Mensagem).NotEmpty().MaximumLength(500);
-        }
+        RuleFor(r => r.Remetente).NotEmpty().MaximumLength(50);
+        RuleFor(r => r.Destinatario).NotEmpty().MaximumLength(50);
+        RuleFor(r => r.Assunto).NotEmpty().MaximumLength(100);
+        RuleFor(r => r.Mensagem).NotEmpty().MaximumLength(500);
     }
 }

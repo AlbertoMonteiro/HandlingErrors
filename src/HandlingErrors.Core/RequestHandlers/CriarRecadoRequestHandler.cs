@@ -1,30 +1,26 @@
 ﻿using HandlingErrors.Core.Modelos;
 using HandlingErrors.Core.Repositorios;
-using HandlingErrors.Shared;
 using HandlingErrors.Shared.RequestModels;
 using MediatR;
 using OperationResult;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace HandlingErrors.Core.RequestHandlers
+namespace HandlingErrors.Core.RequestHandlers;
+
+public class CriarRecadoRequestHandler : IRequestHandler<CriarRecadoRequest, Result>
 {
-    public class CriarRecadoRequestHandler : IRequestHandler<CriarRecadoRequest, Result>
+    private readonly IRecadoRepositorio _recados;
+
+    public CriarRecadoRequestHandler(IRecadoRepositorio recados)
+        => _recados = recados;
+
+    public Task<Result> Handle(CriarRecadoRequest request, CancellationToken cancellationToken)
     {
-        private readonly IRecadoRepositorio _recados;
+        var recadoPai = _recados.ObterRecadoParaAgrupamento(request.Remetente, request.Destinatario, request.Assunto);
 
-        public CriarRecadoRequestHandler(IRecadoRepositorio recados) 
-            => _recados = recados;
+        var recado = new Recado(request.Remetente, request.Destinatario, request.Assunto, request.Mensagem, recadoPai?.AgrupadoComId ?? recadoPai?.Id);
 
-        public Task<Result> Handle(CriarRecadoRequest request, CancellationToken cancellationToken)
-        {
-            var recadoPai = _recados.ObterRecadoParaAgrupamento(request.Remetente, request.Destinatario, request.Assunto);
+        _recados.Adicionar(recado);
 
-            var recado = new Recado(request.Remetente, request.Destinatario, request.Assunto, request.Mensagem, recadoPai?.AgrupadoComId ?? recadoPai?.Id);
-
-            _recados.Adicionar(recado);
-
-            return Result.Success().AsTask;
-        }
+        return Result.Success().AsTask;
     }
 }
