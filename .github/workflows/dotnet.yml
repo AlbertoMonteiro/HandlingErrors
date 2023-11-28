@@ -25,4 +25,4 @@ jobs:
         
         dotnet-cake --target=Coverage
 
-        ./codeclimate-test-reporter after-build -t lcov -r ${CC_TEST_REPORTER_ID} -p ./ --exit-code $?
+        ./codeclimate-test-reporter after-build -t lcov -r ea524caacce9f6a2a0469a9b60ff88136b57dadedf5a758e643c95533c5716eb -p ./ --exit-code $?
