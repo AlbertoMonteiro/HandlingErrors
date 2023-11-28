@@ -1,5 +1,7 @@
 # Instruções para execução
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/c78dc7af9e1fd81a85d9/maintainability)](https://codeclimate.com/github/AlbertoMonteiro/HandlingErrors/maintainability)
+
 ## Requisitos
 
 - .NET 8.0 SDK
