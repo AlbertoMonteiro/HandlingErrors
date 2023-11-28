@@ -7,29 +7,23 @@ namespace HandlingErrors.Core.RequestHandlers.Pipelines;
 public sealed class ExceptionPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
-    private readonly MethodInfo _ResultError;
+    private readonly MethodInfo? _resultError;
     private readonly Type _type = typeof(TResponse);
-    private readonly Type _typeResult = typeof(Result);
 
     public ExceptionPipelineBehavior()
-    {
-        if (_type.IsGenericType)
-        {
-            _ResultError = _typeResult.GetMethods().FirstOrDefault(m => m.Name == "Error" && m.IsGenericMethod);
-            _ResultError = _ResultError.MakeGenericMethod(_type.GetGenericArguments().First());
-        }
-    }
-    public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+        => _resultError = ResultUtils.GetGenericError(_type);
+
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         try
         {
-            return await next?.Invoke();
+            return await next.Invoke();
         }
         catch (Exception e)
         {
-            return _type == _typeResult
-                ? (TResponse)Convert.ChangeType(Result.Error(e), _type)
-                : (TResponse)Convert.ChangeType(_ResultError.Invoke(null, new object[] { e }), _type);
+            return _type == ResultUtils.TypeResult || _resultError is null
+                ? (TResponse)Convert.ChangeType(Result.Error(e), _type)!
+                : (TResponse)Convert.ChangeType(_resultError.Invoke(null, new object[] { e }), _type)!;
         }
     }
 }

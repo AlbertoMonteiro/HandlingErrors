@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
 using HandlingErrors.Shared;
 using HandlingErrors.Shared.Exceptions;
 using MediatR;
@@ -12,43 +11,37 @@ public sealed class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineB
     where TRequest : IValidatable, IRequest<TResponse>
 {
     private readonly AbstractValidator<TRequest> _validator;
-    private readonly MethodInfo _ResultError;
+    private readonly MethodInfo? _resultError;
     private readonly Type _type = typeof(TResponse);
-    private readonly Type _typeResultGeneric = typeof(Result<>);
-    private readonly Type _typeResult = typeof(Result);
 
     public ValidationPipelineBehavior(AbstractValidator<TRequest> validator)
     {
         _validator = validator;
-        if (_type.IsGenericType)
-        {
-            _ResultError = _typeResult.GetMethods().FirstOrDefault(m => m.Name == "Error" && m.IsGenericMethod);
-            _ResultError = _ResultError.MakeGenericMethod(_type.GetGenericArguments().First());
-        }
+        _resultError = ResultUtils.GetGenericError(_type);
     }
 
-    public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+    public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        ValidationResult validationResult;
+        FluentValidation.Results.ValidationResult validationResult;
         ModeloInvalidoException validationError;
-        if (_type == _typeResult)
+        if (_type == ResultUtils.TypeResult || _resultError is null)
         {
             validationResult = _validator.Validate(request);
             if (validationResult.IsValid)
-                return next?.Invoke();
+                return next.Invoke();
 
             validationError = new ModeloInvalidoException(validationResult.Errors.GroupBy(v => v.PropertyName, v => v.ErrorMessage).ToDictionary(v => v.Key, v => v.Select(y => y)));
             return Task.FromResult((TResponse)Convert.ChangeType(Result.Error(validationError), _type));
         }
 
-        if (!_type.IsGenericType || _type.GetGenericTypeDefinition() != _typeResultGeneric)
-            return next?.Invoke();
+        if (!_type.IsGenericType || _type.GetGenericTypeDefinition() != ResultUtils.TypeResultGeneric)
+            return next.Invoke();
 
         validationResult = _validator.Validate(request);
         if (validationResult.IsValid)
-            return next?.Invoke();
+            return next.Invoke();
 
         validationError = new ModeloInvalidoException(validationResult.Errors.GroupBy(v => v.PropertyName, v => v.ErrorMessage).ToDictionary(v => v.Key, v => v.Select(y => y)));
-        return Task.FromResult((TResponse)Convert.ChangeType(_ResultError.Invoke(null, new object[] { validationError }), _type));
+        return Task.FromResult((TResponse)Convert.ChangeType(_resultError.Invoke(null, new object[] { validationError }), _type)!);
     }
 }

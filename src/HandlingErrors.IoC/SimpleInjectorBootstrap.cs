@@ -53,9 +53,10 @@ public static class AppServicesBootstrap
     private static void ConfigureMediatR(IServiceCollection container)
     {
         var assemblies = GetAssemblies().ToArray();
-        container.AddMediatR(typeof(ExceptionPipelineBehavior<,>).Assembly);
-        container.AddSingleton(typeof(ExceptionPipelineBehavior<,>));
-        container.AddSingleton(typeof(ValidationPipelineBehavior<,>));
+        container.AddMediatR(x => x
+                    .RegisterServicesFromAssemblies(typeof(ExceptionPipelineBehavior<,>).Assembly)
+                    .AddOpenBehavior(typeof(ExceptionPipelineBehavior<,>))
+                    .AddOpenBehavior(typeof(ValidationPipelineBehavior<,>)));
     }
 
     private static IEnumerable<Assembly> GetAssemblies()

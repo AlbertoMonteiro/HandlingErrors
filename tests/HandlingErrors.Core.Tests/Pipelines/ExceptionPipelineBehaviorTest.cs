@@ -18,7 +18,7 @@ public class ExceptionPipelineBehaviorTest
         static Task<Result<long>> Next() => throw new Exception("Fail");
 
         //Act
-        var result = await _sut.Handle(null, CancellationToken.None, Next);
+        var result = await _sut.Handle(null, Next, CancellationToken.None);
 
         //Assert
         Assert.False(result.IsSuccess);
@@ -31,7 +31,7 @@ public class ExceptionPipelineBehaviorTest
         static Task<Result<long>> Next() => Task.FromResult(Result.Success(1L));
 
         //Act
-        var result = await _sut.Handle(null, CancellationToken.None, Next);
+        var result = await _sut.Handle(null, Next, CancellationToken.None);
 
         //Assert
         Assert.True(result.IsSuccess);

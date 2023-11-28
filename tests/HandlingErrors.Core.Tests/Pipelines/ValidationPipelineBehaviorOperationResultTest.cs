@@ -25,7 +25,7 @@ public class ValidationPipelineBehaviorResultTest
         var request = new SampleRequest();
 
         //Act
-        var (success, exception) = await _sut.Handle(request, CancellationToken.None, null);
+        var (success, exception) = await _sut.Handle(request, null, CancellationToken.None);
 
         //Assert
         Assert.False(success);
@@ -41,7 +41,7 @@ public class ValidationPipelineBehaviorResultTest
         static Task<Result> Next() => Task.FromResult(Result.Success());
 
         //Act
-        var (success, exception) = await _sut.Handle(request, CancellationToken.None, Next);
+        var (success, exception) = await _sut.Handle(request, Next, CancellationToken.None);
 
         //Assert
         Assert.True(success);
