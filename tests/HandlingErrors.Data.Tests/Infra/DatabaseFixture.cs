@@ -1,24 +1,31 @@
 ﻿using AutoMapper;
 using AutoMapper.Extensions.ExpressionMapping;
 using Microsoft.EntityFrameworkCore;
+using Testcontainers.MsSql;
+using Xunit;
 
 namespace HandlingErrors.Data.Tests.Infra;
 
-public sealed class DatabaseFixture
+public sealed class DatabaseFixture : IAsyncLifetime
 {
-    private const string ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=HandlingErrorsRecadosTest;Trusted_Connection=True;";
-    public HandlingErrorsContext Context { get; }
-    public IMapper Mapper { get; }
+    readonly MsSqlContainer container = new MsSqlBuilder().Build();
 
-    public DatabaseFixture()
+    public HandlingErrorsContext Context { get; private set; }
+    public IMapper Mapper { get; private set; }
+
+    public async Task InitializeAsync()
     {
-        var options = new DbContextOptionsBuilder<HandlingErrorsContext>();
-        options.UseSqlServer(ConnectionString);
+        await container.StartAsync();
+         
+         var options = new DbContextOptionsBuilder<HandlingErrorsContext>();
+        options.UseSqlServer(container.GetConnectionString());
         Context = new HandlingErrorsContext(options.Options);
-        Context.Database.EnsureDeleted();
         Context.Database.EnsureCreated();
         Mapper = GetMapper();
     }
+
+    public Task DisposeAsync() 
+        => container.DisposeAsync().AsTask();
 
     public static IMapper GetMapper()
     {

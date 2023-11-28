@@ -7,7 +7,7 @@ using Xunit;
 namespace HandlingErrors.Data.Tests;
 
 [Collection("Database collection")]
-public class RecadoRepositorioTests : IDisposable
+public class RecadoRepositorioTests : IClassFixture<DatabaseFixture>, IDisposable
 {
     private readonly HandlingErrorsContext _ctx;
     private readonly IDbContextTransaction _transaction;
