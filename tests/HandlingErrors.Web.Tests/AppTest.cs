@@ -1,24 +1,26 @@
 using HandlingErrors.Shared.Exceptions;
 using HandlingErrors.Shared.RequestModels;
 using HandlingErrors.Shared.ViewModels;
-using HandlingErrors.Web.Controllers;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using System.Net.Http.Json;
 using Xunit;
 using static OperationResult.Result;
 
 namespace HandlingErrors.Web.Tests;
 
-public class RecadosControllerTest
+public class AppTest
 {
-    protected readonly IMediator _mediator;
-    private readonly RecadosController _sut;
+    private static readonly TestApplication _application;
+    private static readonly HttpClient _client;
+    private static readonly IMediator _mediator;
 
-    public RecadosControllerTest()
+    static AppTest()
     {
-        _mediator = Substitute.For<IMediator>();
-        _sut = new RecadosController(_mediator);
+        _application = new TestApplication();
+        _client = _application.CreateClient();
+        _mediator = _application.Services.GetRequiredService<IMediator>();
     }
 
     [Fact]
@@ -29,7 +31,7 @@ public class RecadosControllerTest
             .Returns(Success(default(IQueryable<RecadoViewModel>)));
 
         //Act
-        await _sut.Get();
+        var response = await _client.GetAsync("api/recados");
 
         //Assert
         await _mediator.Received().Send(Arg.Any<ObterRecadosRequest>());
@@ -43,11 +45,10 @@ public class RecadosControllerTest
             .Returns(Error<IQueryable<RecadoViewModel>>(new Exception()));
 
         //Act
-        var result = await _sut.Get();
+        var response = await _client.GetAsync("api/recados");
 
         //Assert
-        var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
-        Assert.Equal(500, statusCodeResult.StatusCode);
+        Assert.Equal(500, (int)response.StatusCode);
         await _mediator.Received().Send(Arg.Any<ObterRecadosRequest>());
     }
 
@@ -55,12 +56,12 @@ public class RecadosControllerTest
     public async Task PostActionDeveEnviarORequestCorretamente()
     {
         //Arrange
-        var request = new CriarRecadoRequest();
+        var request = new CriarRecadoRequest("", "", "", "");
         _mediator.Send(request)
             .Returns(Success());
 
         //Act
-        await _sut.Post(request);
+        var response = await _client.PostAsJsonAsync("api/recados", request);
 
         //Assert
         await _mediator.Received().Send(request);
@@ -70,12 +71,12 @@ public class RecadosControllerTest
     public async Task PostActionRecebendoUmRequestInvalidoRetornaBadRequest()
     {
         //Arrange
-        var request = new CriarRecadoRequest();
+        var request = new CriarRecadoRequest("", "", "", "");
         _mediator.Send(request)
           .Returns(Error(new ModeloInvalidoException(null)));
 
         //Act
-        await _sut.Post(request);
+        var response = await _client.PostAsJsonAsync("api/recados", request);
 
         //Assert
         await _mediator.Received().Send(request);

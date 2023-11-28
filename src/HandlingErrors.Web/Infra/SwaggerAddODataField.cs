@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.OData.Query;
+﻿using HandlingErrors.Web.Endpoints;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Reflection;
 
 namespace HandlingErrors.Web.Infra;
 
@@ -23,7 +22,7 @@ public class SwaggerAddODataField : IOperationFilter
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        if (context.MethodInfo.GetCustomAttribute<EnableQueryAttribute>() == null)
+        if (!context.ApiDescription.ActionDescriptor.EndpointMetadata.OfType<EnabledODataQuery>().Any())
             return;
 
         operation.Description = OPERATION_DESCRIPTION;

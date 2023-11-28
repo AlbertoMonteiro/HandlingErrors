@@ -14,12 +14,12 @@ public class ValidadorCriarRecadoRequestTest
     {
         //arrenge
         var request = new CriarRecadoRequest
-        {
-            Remetente = "Fulano",
-            Destinatario = "Ciclano",
-            Assunto = "Mensagem urgente",
-            Mensagem = "Esse modelo é válido!"
-        };
+        (
+            "Fulano",
+            "Ciclano",
+            "Mensagem urgente",
+            "Esse modelo é válido!"
+        );
 
         //act
         var resultado = _sut.TestValidate(request);
@@ -35,7 +35,7 @@ public class ValidadorCriarRecadoRequestTest
     public void NaoDeveAceitarCamposVazios()
     {
         //arrenge
-        var request = new CriarRecadoRequest();
+        var request = new CriarRecadoRequest(null!, null!, null!, null!);
 
         //act
         var resultado = _sut.TestValidate(request);
@@ -51,10 +51,11 @@ public class ValidadorCriarRecadoRequestTest
     public void DeveRespeitarOTamanhoMaximoDeCadaCampo()
     {
         //arrenge
-        var request = new CriarRecadoRequest();
-        request.Remetente = request.Destinatario = new string('a', 51);
-        request.Assunto = new string('a', 101);
-        request.Mensagem = new string('a', 501);
+        var request = new CriarRecadoRequest(new string('a', 51),
+                                             new string('a', 51),
+                                             new string('a', 101),
+                                             new string('a', 501));
+
 
         //act
         var resultado = _sut.TestValidate(request);
