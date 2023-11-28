@@ -1,59 +1,53 @@
-#tool "nuget:?package=OpenCover&version=4.7.922"
-#tool "nuget:?package=ReportGenerator&version=4.2.20"
+#tool nuget:?package=ReportGenerator&version=5.0.2
 
-using System;
-using System.Collections;
-using System.Linq;
-using System.Text.RegularExpressions;
+///////////////////////////////////////////////////////////////////////////////
+// ARGUMENTS
+///////////////////////////////////////////////////////////////////////////////
 
 var target = Argument("target", "Build");
+var configuration = Argument("configuration", "Release");
+
+///////////////////////////////////////////////////////////////////////////////
+// TASKS
+///////////////////////////////////////////////////////////////////////////////
 
 Task("Build")
     .Does(() =>
 {
-    DotNetCoreBuild("./EnkiGroup.sln");
+    DotNetBuild("HandlingErrors.sln");
 });
 
 Task("Test")
+    .IsDependentOn("Build")
     .Does(() =>
 {
-    DotNetCoreTest("./EnkiGroup.sln");
+    if (System.IO.Directory.Exists("testresults"))
+        System.IO.Directory.Delete("testresults", true);
+
+    var settings = new DotNetTestSettings
+    {
+        NoRestore = true,
+        ArgumentCustomization  = x => x.Append("--collect:\"XPlat Code Coverage\""),
+        Verbosity = DotNetVerbosity.Quiet
+    };
+
+    DotNetTest("HandlingErrors.sln", settings);
 });
 
 Task("Coverage")
+    .IsDependentOn("Test")
     .Does(() =>
 {
-    if(System.IO.File.Exists("result.xml"))
-        System.IO.File.Delete("result.xml");
-    if(System.IO.Directory.Exists("coverageOutput"))
-        System.IO.Directory.Delete("coverageOutput", true);
-    
-    OpenCover(tool =>
-    {
-        tool.DotNetCoreTest("./EnkiGroup.sln");
-    },
-    new FilePath("./result.xml"),
-    new OpenCoverSettings() { OldStyle = true, ReturnTargetCodeOffset = 0 }
-        .WithFilter("-[EnkiGroup.Web*]*Infra*")
-        .WithFilter("-[EnkiGroup.Web*]*Program*")
-        .WithFilter("-[EnkiGroup.Web*]*Startup*")
-        .WithFilter("-[EnkiGroup.Shared*]*ViewModels*")
-        .WithFilter("-[EnkiGroup.Shared*]*IEnumerableExtensions*")
-        .WithFilter("-[EnkiGroup.Shared*]*OperationResult*")
-        .WithFilter("-[EnkiGroup.Data*]*Profiles*")
-        .WithFilter("-[EnkiGroup.Data*]*EntityTypeConfigurations*")
-        .WithFilter("-[EnkiGroup.Data*]*EnkiGroupContext*")
-        .WithFilter("-[EnkiGroup.Data*]*Microsoft*")
-        .WithFilter("-[EnkiGroup.Data*]*System*")
-        .WithFilter("-[EnkiGroup.IoC*]*SimpleInjectorBootstrap*")
-        .WithFilter("+[EnkiGroup*]*")
-        .WithFilter("-[EnkiGroup.*.Tests]*")
-    );
+    if (System.IO.Directory.Exists("coverage"))
+        System.IO.Directory.Delete("coverage", true);
 
-    ReportGenerator("./result.xml", "./coverageOutput", new ReportGeneratorSettings  { ReportTypes = new []
+    GlobPattern coverageFiles = "./tests/**/*.cobertura.xml";
+
+    ReportGenerator(coverageFiles, "./coverage", new ReportGeneratorSettings  { ReportTypes = new []
     {
         ReportGeneratorReportType.TextSummary,
-        ReportGeneratorReportType.Html
+        ReportGeneratorReportType.lcov,
+        ReportGeneratorReportType.HtmlInline_AzurePipelines_Dark
     }});
 });
 

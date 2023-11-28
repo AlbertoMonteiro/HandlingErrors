@@ -23,25 +23,15 @@ public sealed class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineB
     public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         FluentValidation.Results.ValidationResult validationResult;
-        ModeloInvalidoException validationError;
-        if (_type == ResultUtils.TypeResult || _resultError is null)
-        {
-            validationResult = _validator.Validate(request);
-            if (validationResult.IsValid)
-                return next.Invoke();
-
-            validationError = new ModeloInvalidoException(validationResult.Errors.GroupBy(v => v.PropertyName, v => v.ErrorMessage).ToDictionary(v => v.Key, v => v.Select(y => y)));
-            return Task.FromResult((TResponse)Convert.ChangeType(Result.Error(validationError), _type));
-        }
-
-        if (!_type.IsGenericType || _type.GetGenericTypeDefinition() != ResultUtils.TypeResultGeneric)
-            return next.Invoke();
 
         validationResult = _validator.Validate(request);
         if (validationResult.IsValid)
             return next.Invoke();
+        
+        var validationError = new ModeloInvalidoException(validationResult.Errors.GroupBy(v => v.PropertyName, v => v.ErrorMessage).ToDictionary(v => v.Key, v => v.Select(y => y)));
 
-        validationError = new ModeloInvalidoException(validationResult.Errors.GroupBy(v => v.PropertyName, v => v.ErrorMessage).ToDictionary(v => v.Key, v => v.Select(y => y)));
-        return Task.FromResult((TResponse)Convert.ChangeType(_resultError.Invoke(null, new object[] { validationError }), _type)!);
+        return _type == ResultUtils.TypeResult || _resultError is null
+            ? Task.FromResult((TResponse)Convert.ChangeType(Result.Error(validationError), _type))
+            : Task.FromResult((TResponse)Convert.ChangeType(_resultError.Invoke(null, new object[] { validationError }), _type)!);
     }
 }

@@ -7,9 +7,18 @@
     <ImplicitUsings>true</ImplicitUsings>
 
     <IsPackable>false</IsPackable>
+    <CoverletOutputPath Condition="'$(CoverletOuputPath)' == ''">.</CoverletOutputPath>
+    <CoverletOutput>$(CoverletOutputPath)/$(MSBuildProjectName.Replace('.', '_'))</CoverletOutput>
+    <CollectCoverage>true</CollectCoverage>
+    <ExcludeByAttribute>GeneratedCodeAttribute</ExcludeByAttribute>
+    <CoverletOutputFormat>opencover</CoverletOutputFormat>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="coverlet.msbuild" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Mediatr" Version="12.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
