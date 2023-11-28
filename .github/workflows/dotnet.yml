@@ -26,4 +26,6 @@ jobs:
         
         dotnet-cake --target=Coverage
 
+        mv ./coverage/Cobertura.xml ./coverage/cobertura.xml
+
         ./codeclimate-test-reporter after-build -t cobertura -r ${CC_TEST_REPORTER_ID} -p ./ --exit-code $?
