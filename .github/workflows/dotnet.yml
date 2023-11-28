@@ -2,6 +2,9 @@ name: .NET
 
 on: [push]
 
+env:
+  CC_TEST_REPORTER_ID: ${{ vars.CC_TEST_REPORTER_ID }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,8 +16,6 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Build & Test
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       run: |
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./codeclimate-test-reporter
         chmod +x ./codeclimate-test-reporter
@@ -25,4 +26,4 @@ jobs:
         
         dotnet-cake --target=Coverage
 
-        ./codeclimate-test-reporter after-build -t lcov -r ea524caacce9f6a2a0469a9b60ff88136b57dadedf5a758e643c95533c5716eb -p ./ --exit-code $?
+        ./codeclimate-test-reporter after-build -t cobertura -r ${CC_TEST_REPORTER_ID} -p ./ --exit-code $?
