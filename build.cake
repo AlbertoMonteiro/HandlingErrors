@@ -47,6 +47,7 @@ Task("Coverage")
     {
         ReportGeneratorReportType.TextSummary,
         ReportGeneratorReportType.lcov,
+        ReportGeneratorReportType.Cobertura,
         ReportGeneratorReportType.HtmlInline_AzurePipelines_Dark
     }});
 });
