@@ -2,7 +2,7 @@
 
 ## Requisitos
 
-- .NET Core 3.1 SDK [windows x64 download](https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.1.200-windows-x64-installer) | [outras opções](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+- .NET 8.0 SDK
 - Node JS versão LTS [download](https://nodejs.org/en/)
 - **[opcional]** SQL Server LocalDb `(localdb)\mssqllocaldb` [instruções](https://docs.microsoft.com/pt-br/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver15#try-it-out)
     - Se você já tiver outra versão de SQL Server instalado, então será necessário trocar a connection string que fica no arquivo `appsettings.json`
@@ -41,12 +41,11 @@ Para a construção eu escolhi a seguintes tecnologias:
 
 ### Backend
 
-1. C# 8.0
-1. .NET Core 3.1
-1. ASP.NET Core 3.1
+1. C# 12.0
+1. .NET 8.
 1. AutoMapper
-1. Entity Framework Core 3.*
-1. OData 7.4
+1. Entity Framework Core 8.*
+1. OData 8.*
 1. xUnit
 1. SimpleInjector
 1. FluentValidation
