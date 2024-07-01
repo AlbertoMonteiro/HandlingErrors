@@ -9,7 +9,7 @@ public static class ODataExtensions
 {
     public static void AddOData(this IServiceCollection services)
     {
-        var odataMethod = typeof(ODataMvcCoreBuilderExtensions).GetMethod("AddODataCore", BindingFlags.NonPublic | BindingFlags.Static);
+        var odataMethod = typeof(ODataServiceCollectionExtensions).GetMethod("AddODataCore", BindingFlags.NonPublic | BindingFlags.Static);
         odataMethod?.Invoke(null, null);
 
         var odataBuilder = new ODataConventionModelBuilder();
