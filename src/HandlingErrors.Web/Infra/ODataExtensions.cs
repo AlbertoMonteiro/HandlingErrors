@@ -10,7 +10,7 @@ public static class ODataExtensions
     public static void AddOData(this IServiceCollection services)
     {
         var odataMethod = typeof(ODataServiceCollectionExtensions).GetMethod("AddODataCore", BindingFlags.NonPublic | BindingFlags.Static);
-        odataMethod?.Invoke(null, null);
+        odataMethod?.Invoke(null, [services]);
 
         var odataBuilder = new ODataConventionModelBuilder();
         odataBuilder.EntitySet<RecadoViewModel>("Recado");
